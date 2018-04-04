@@ -1,0 +1,16 @@
+Mauricio Luiz Abreu Cardoso NUSP: 6796479
+
+O experimento consistiu em alocar uma matriz de 100 linhas e 1000000 colunas. A matriz foi varrida primeiramente por linhas, e depois alterando colunas, e ambos procedimentos tiveram seus tempos medidos.
+Verificou-se que ao varrer a matriz por linha a leitura era muito mais rápida do que ao ser varrida por colunas. Eis alguns resultados:
+gcc -ansi -pedantic -Wall -O2 ep.c -o ep
+mauricio@mauriciolinux:~/Desktop/concorrente$ ./ep
+Tempo para atualizar a matriz 100x1000000  varrendo por linha :   163.60 micro segundos
+Tempo para atualizar a matriz 100x1000000 varrendo por coluna  :   734.02 micro segundos
+mauricio@mauriciolinux:~/Desktop/concorrente$ ./ep
+Tempo para atualizar a matriz 100x1000000  varrendo por linha :   164.97 micro segundos
+Tempo para atualizar a matriz 100x1000000 varrendo por coluna  :   916.88 micro segundos
+mauricio@mauriciolinux:~/Desktop/concorrente$ ./ep
+Tempo para atualizar a matriz 100x1000000  varrendo por linha :   161.39 micro segundos
+Tempo para atualizar a matriz 100x1000000 varrendo por coluna  :   919.60 micro segundos
+Isto se deve ao fato de que em C, a memória é alocada linha a linha, de forma que ao se pedir o elemento de uma linha, caso esta caiba no cache ela é trazida da meória principal em blocos, e as próximas execuções por elementos que estejam na mesma linha serão rápidas, pois esses elementos já estão no cache. Caso a matriz seja varrida por colunas, cada vez que um bloco de elementos é trazido ao cache, ao se consultar o valor de um elemento de uma linha e se pedir o valor de um elemento da linha seguinte, este último não estará no cache, sendo necessária nova busca na memória principal, aumentando drasticamente o tempo de 
+execução.
