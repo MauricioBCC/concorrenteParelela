@@ -33,7 +33,7 @@
 static int64_t total_time = 0;
 static int num_threads = 0;
 static int num_accesses[MAX_PROCESSES];
-static int num_accesses_avg[MAX_PROCESSES];
+static double num_accesses_avg[MAX_PROCESSES];
 static pthread_barrier_t barrier;
 
 static uint64_t get_time(void)
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
             }
         
             memset(num_accesses, 0x00, num_threads*sizeof(int));
-            memset(num_accesses_avg, 0x00, num_threads*sizeof(int));
+            // memset(num_accesses_avg, 0x00, num_threads*sizeof(double));
             total_time = param_total_time;
 
             if (pthread_barrier_init(&barrier, NULL, num_threads + 1))
@@ -145,11 +145,11 @@ int main(int argc, char* argv[])
 
             num_accesses_avg[k] = statistics_average(num_threads, num_accesses);
 
-            printf("---------------------\n");
-            printf("Algorithm: %s, Execution number: %d\n", name, k+1);
-            printf("Elapsed time (in nanoseconds): %lu\n", (time2-time1));
-            statistics_print(num_threads, num_accesses);
-            printf("---------------------\n");
+            // printf("---------------------\n");
+            // printf("Algorithm: %s, Execution number: %d\n", name, k+1);
+            // printf("Elapsed time (in nanoseconds): %lu\n", (time2-time1));
+            // statistics_print(num_threads, num_accesses);
+            // printf("---------------------\n");
         }
 
         statistics_avg_print(NUM_EXECUTIONS, num_accesses_avg);

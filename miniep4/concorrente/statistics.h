@@ -10,6 +10,12 @@ double statistics_stddev(int n, const int v[], const double* avg);
 
 void statistics_print(int n, const int v[]);
 
-void statistics_avg_print(int n, const int v[]);
+void statistics_avg_print(int n, const double v[]);
+
+double statistics_average_double(int n, const double v[]);
+
+double statistics_stddev_double(int n, const double v[], const double* avg);
+
+void statistics_print_array_double(int n, const double v[]);
 
 #endif /*STATISTICS_H*/
