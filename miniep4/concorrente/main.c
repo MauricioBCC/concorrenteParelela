@@ -152,6 +152,9 @@ int main(int argc, char* argv[])
             // printf("---------------------\n");
         }
 
+        printf("Algorithm: %s\n", name);
+        printf("Quantidade de threads: %d\n", num_threads);
+        printf("Tempo total: %d\n", param_total_time);
         statistics_avg_print(NUM_EXECUTIONS, num_accesses_avg);
         printf("---------------------\n");
 
