@@ -33,7 +33,7 @@
 static int64_t total_time = 0;
 static int num_threads = 0;
 static int num_accesses[MAX_PROCESSES];
-
+static int num_accesses_avg[MAX_PROCESSES];
 static pthread_barrier_t barrier;
 
 static uint64_t get_time(void)
@@ -85,13 +85,13 @@ int main(int argc, char* argv[])
     num_threads = atoi(argv[1]);
     param_total_time  = atoll(argv[2]);
 
-    for (j = 0; j < num_algorithms; ++j)
+    for (j = 0; j < num_algorithms; ++j)   /* neste ep, num_algorithms = 2, logo j = 0 ou j = 1*/
     {
         lock_alg_t algorithm = algorithms[j];
-        const char* name = lock_get_algorithm_name(algorithm);
+        const char* name = lock_get_algorithm_name(algorithm); /* pega o nome do algoritmo*/
         uint64_t time1, time2;
 
-        for (k = 0; k < NUM_EXECUTIONS; ++k)
+        for (k = 0; k < NUM_EXECUTIONS; ++k)   /* numero de testes para cada algoritmo */
         {
             if (lock_init(num_threads, algorithm))
             {
@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
             }
         
             memset(num_accesses, 0x00, num_threads*sizeof(int));
+            memset(num_accesses_avg, 0x00, num_threads*sizeof(int));
             total_time = param_total_time;
 
             if (pthread_barrier_init(&barrier, NULL, num_threads + 1))
@@ -110,7 +111,7 @@ int main(int argc, char* argv[])
 
             for (i = 0; i < num_threads; ++i)
             {
-                int scheduler = OS_SCHEDULER;
+                int scheduler = OS_SCHEDULER;          /* aqui entra o algoritmo de escalonamento escolhido */
                 int priority = sched_get_priority_max(scheduler);
                 struct sched_param param = {.sched_priority = priority};
                 
@@ -119,7 +120,7 @@ int main(int argc, char* argv[])
                     printf("Unable to create thread %d, exiting...\n", i);
                     exit(1);
                 }
-                if (pthread_setschedparam(threads[i], scheduler, &param))
+                if (pthread_setschedparam(threads[i], scheduler, &param))     /* escolhe o algoritmo de escalonamento e dá prioridade maxima para a thread segundo esse algoritmo */
                     printf("WARNING: Unable to change the thread scheduling policy!\n");
             }
             
@@ -142,12 +143,18 @@ int main(int argc, char* argv[])
                 exit(1);
             }
 
+            num_accesses_avg[k] = statistics_average(num_threads, num_accesses);
+
             printf("---------------------\n");
             printf("Algorithm: %s, Execution number: %d\n", name, k+1);
             printf("Elapsed time (in nanoseconds): %lu\n", (time2-time1));
             statistics_print(num_threads, num_accesses);
             printf("---------------------\n");
-        }   
+        }
+
+        statistics_avg_print(NUM_EXECUTIONS, num_accesses_avg);
+        printf("---------------------\n");
+
     }
     return 0;
 }

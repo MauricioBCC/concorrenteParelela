@@ -44,7 +44,7 @@ void bakery_lock(int this_thread)
     {
         if (this_thread != that_thread)
         {
-            GLOBALS_AWAIT(!choosing[that_thread]);
+            GLOBALS_AWAIT(!choosing[that_thread]);     /* while (choosing[that_thread]) sched_yield() */
             
             GLOBALS_AWAIT ( 
                 number[that_thread] == 0 || 

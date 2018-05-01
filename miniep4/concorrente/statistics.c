@@ -47,3 +47,16 @@ void statistics_print(int n, const int v[])
 	printf("Number of times that each thread accessed the CS:\n");
 	statistics_print_array(n, v);
 }
+
+void statistics_avg_print(int n, const int v[])
+{
+	double avg, stddev;
+	avg = statistics_average(n, v);
+	stddev = statistics_stddev(n, v, &avg);
+
+	printf("Average of averages accesses: %f\n", avg);
+	printf("Average of Standard Deviations of accesses: %f\n", stddev);
+	printf("Averages of each test:\n");
+	statistics_print_array(n, v);
+}
+
